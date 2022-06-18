@@ -3,7 +3,7 @@
 
 ## Description
 
-The purpose of this project to create a social networking webpage using mongoose. It is a good alternative to use in place of using MySQL.
+The purpose of this project to create a budgeting app that can be used online or offline. When it is offline it will save the data localy and then upload once reconnected to the internet.
 
 
 
@@ -24,8 +24,7 @@ Please see video link for a walk through on how to clone it.
 [Clone to your computer](https://drive.google.com/file/d/15ogCY3Q-JLWhteoSiIoXLkhtK4Z0-mfz/view?usp=sharing "Click Me!")
 <br><br>
 
-[How it works in Insomnia](https://youtu.be/5gW3c7UwXL0 "Click Me!")
-<br><br>
+
 
 Once cloned you can put the following commands in:
 * `npm init -y`
@@ -35,7 +34,7 @@ Once cloned you can put the following commands in:
 
 ## Usage
 
-After you have cloned the repo to your computer and downloaded its dependencies you can run `npm run devStart` in the terminal. Then you will then be able to look at POST or GET routes on Insomnia. 
+After you have cloned the repo to your computer and downloaded its dependencies you can run `node server` in the terminal. Then you will then be able to look at POST or GET routes on Insomnia. 
 
 
 ## License
@@ -46,7 +45,7 @@ After you have cloned the repo to your computer and downloaded its dependencies 
 
 ## Tests
 
-To test this application run by running `npm run devStart` in bash and then opening it up in Insomnia.
+To test this application run by running `node server` in bash and then opening it up in Insomnia.
 
 ## Contact Me
 

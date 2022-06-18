@@ -56,3 +56,20 @@ self.addEventListener('activate', function(e) {
     );
     self.clients.claim();
 });
+
+self.addEventListener('fetch', function (e) {
+    console.log('fetched SW');
+    e.respondWith(
+        caches.match(e.request).then(function (request) {
+            if (request) { 
+                console.log('fetch request working');
+                return request
+            }
+            else {       
+                console.log('fetch failed');
+                return fetch(e.request)
+            }
+
+        })
+    )
+});
