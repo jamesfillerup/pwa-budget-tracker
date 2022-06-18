@@ -28,4 +28,3 @@ app.listen(PORT, () => {
   console.log(`App running on port ${PORT}!`);
 });
 
-//You should add your service worker to the root of the public/ directory of your application.
