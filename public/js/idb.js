@@ -16,7 +16,7 @@ function statusCheck (e){
     }
 }
 
-let db;
+// let db;
 
-const request = indexedDB.open("budget", 1);
+// const request = indexedDB.open("budget", 1);
 
