@@ -6,6 +6,17 @@ const compression = require("compression");
 const PORT = process.env.PORT || 3001;
 const MONGODB_URI = process.env.MONGODB_URI || "mongodb://127.0.0.1/budget";
 
+
+const { MongoClient, ServerApiVersion } = require('mongodb');
+const uri = "mongodb+srv://jamesfillerupdb:Mountaineer369@cluster0.t3ofuyu.mongodb.net/?retryWrites=true&w=majority";
+const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
+client.connect(err => {
+  const collection = client.db("test").collection("devices");
+  // perform actions on the collection object
+  client.close();
+});
+
+
 const app = express();
 
 app.use(logger("dev"));
