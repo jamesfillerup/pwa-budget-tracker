@@ -3,6 +3,8 @@
 // window.addEventListener('online', statusCheck);
 // window.addEventListener('offline', statusCheck);
 
+// const { response } = require("express");
+
 // function statusCheck (e){
 //     //https://developer.mozilla.org/en-US/docs/Web/API/Navigator/onLine
 
@@ -20,16 +22,15 @@ let db;
 
 const request = indexedDB.open("budgettracker-", 1);
 
+
 request.onupgradeneeded = function(event) {
 
-    // save a reference to the database
     const db = event.target.result;
-
-    // create an object store (table) called `new_transaction`, set it to have an auto incrementing primary key of sorts
-    db.createObjectStore('new_transaction', { autoIncrement: true });
+    db.createObjectStore('newItem', { autoIncrement: true });
 };
 
 request.onsuccess = function (event) {
+
     db = event.target.result;
 
     if (navigator.onLine) {
@@ -38,6 +39,45 @@ request.onsuccess = function (event) {
 };
 
 request.onerror = function (event) {
-    // log error here
-    console.log("There was an err on idb" + event.target.errorCode);
+
+    console.log("There was an err on idb");
 };
+
+function saveItem(item) {
+
+    const transaction = db.transaction(['newItem'], 'readwrite');
+    const  storeNewItem = transaction.objectStore('newItem');
+
+    storeNewItem.add(item);
+}
+
+//this show the items on made in the transactions
+function showItem(){
+    const transaction = db.transaction(['newItem'], 'readwrite');
+    const  storeNewItem = transaction.objectStore('newItem');
+    const getAll = storeNewItem.getAll();
+
+    getAll.onsuccess = function (){
+        if (getAll.result.length > 0){
+            fetch('/api/transaction/bulk', {
+                method: 'POST',
+                body: JSON.stringify(getAll.result),
+                headers: {
+                    Accept: 'application/json, text/plain, */*',
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then((response) => response.json())
+            .then(() => {
+                const transaction = db.transaction(['newItem'], 'readwrite');
+                const  storeNewItem = transaction.objectStore('newItem');
+    //this clears items
+                storeNewItem.clear();
+            })
+        }
+    }
+}
+
+
+window.addEventListener('online', showItem);
+
