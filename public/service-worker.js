@@ -1,9 +1,9 @@
-const CACHE_NAME = 'budgettracker-cache-v2';
-const DATA_CACHE_NAME = 'budgetdata-cache-v2';
+// const CACHE_NAME = 'budgettracker-cache-v2';
+// const DATA_CACHE_NAME = 'budgetdata-cache-v2';
 
 const APP_PREFIX = "budgettracker-";    
 const VERSION = 'version-01';
-// const CACHE_NAME = APP_PREFIX + VERSION;
+const CACHE_NAME = APP_PREFIX + VERSION;
 
 const FILES_TO_CACHE = [
     'index.html',
