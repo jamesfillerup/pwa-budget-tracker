@@ -22,8 +22,8 @@ const FILES_TO_CACHE = [
 ];
 
 
-self.addEventListener('install', function(e) {
-    e.waitUntil(
+self.addEventListener('install', function(event) {
+    event.waitUntil(
         caches.open(CACHE_NAME).then(cache => {
             console.log('installed from SW!');
             
@@ -40,8 +40,8 @@ self.addEventListener('install', function(e) {
 
 
 
-self.addEventListener('activate', function(e) {
-    e.waitUntil(
+self.addEventListener('activate', function(event) {
+    event.waitUntil(
         caches.keys().then(keyList => {
             return Promise.all(
             keyList.map(key => {
@@ -57,21 +57,23 @@ self.addEventListener('activate', function(e) {
     self.clients.claim();
 });
 
-self.addEventListener('fetch', function (e) {
-    console.log('fetched SW');
-    e.respondWith(
-        caches.match(e.request).then(function (request) {
-            if (request) { 
-                console.log('fetch request working');
-                return request
-            }
-            else {       
-                console.log('fetch failed');
-                return fetch(e.request)
-            }
-
-        })
-    )
+self.addEventListener('fetch', function (event) {
+    if (event.request.url.includes('/api/')){
+        event.respondWith(
+            caches.open(event.request).then(function (request) {
+                if (request) { 
+                    console.log('fetch request working');
+                    return request
+                }
+                else {       
+                    console.log('fetch failed on service worker');
+                    return fetch(event.request)
+                }
+    
+            })
+        )
+    }
+    
 });
 
 
