@@ -1,79 +1,88 @@
-// const CACHE_NAME = 'budgettracker-cache-v2';
-// const DATA_CACHE_NAME = 'budgetdata-cache-v2';
 
-const APP_PREFIX = "budgettracker-";    
-const VERSION = 'version-01';
+const APP_PREFIX = 'budgettracker-';  
+const VERSION = 'v001';
 const CACHE_NAME = APP_PREFIX + VERSION;
+const DATA_CACHE_NAME = "cache-" + VERSION;
 
 const FILES_TO_CACHE = [
-    './index.html',
-    './css/styles.css',
-    './js/index.js',
-    './js/idb.js',
-    './manifest.json',
-    './icons/icon-512x512.png',
-    './icons/icon-384x384.png',
-    './icons/icon-192x192.png',
-    './icons/icon-152x152.png',
-    './icons/icon-144x144.png',
-    './icons/icon-128x128.png',
-    './icons/icon-96x96.png',
-    './icons/icon-72x72.png'
+  "/",
+  "./index.html",
+  "./css/styles.css",
+  "./js/idb.js",
+  "./js/index.js",
+  "./manifest.json",
+  "./icons/icon-72x72.png",
+  "./icons/icon-96x96.png",
+  "./icons/icon-128x128.png",
+  "./icons/icon-144x144.png",
+  "./icons/icon-152x152.png",
+  "./icons/icon-192x192.png",
+  "./icons/icon-384x384.png",
+  "./icons/icon-512x512.png"
 ];
-
-
-self.addEventListener('install', function(event) {
+// this installs the cached items
+self.addEventListener("install", function(event) {
     event.waitUntil(
-        caches.open(CACHE_NAME).then(cache => {
-            console.log('installed from SW!');
-            
-            return cache.addAll(FILES_TO_CACHE);
+        caches.open(CACHE_NAME).then(function(cache) {
+        console.log('installed cache : ' + CACHE_NAME)
+        return cache.addAll(FILES_TO_CACHE);
         })
     );
-    self.skipWaiting();
 });
 
+//this fetches the items stored
+self.addEventListener("fetch", function(event) {
 
-
-self.addEventListener('activate', function(event) {
-    event.waitUntil(
-        caches.keys().then(keyList => {
-            let keyIndex = keyList.filter(function (key) {
-                return key.indexOf(APP_PREFIX);
-            });
-
-            keyIndex.push(CACHE_NAME);
-
-            return Promise.all(keyList.map((key, i) => {
-                console.log(key);
-                if (keyIndex.indexOf (key ) === -1) {
-                console.log('gets rid of old data', keyList);
-                return caches.delete(keyList [i]);
-                }
-            })
-            );
-        })
-    );
-    // self.clients.claim();
-});
-
-self.addEventListener('fetch', function (event) {
-    // if (event.request.url.includes('/api/')){
+    if (event.request.url.includes("/api/")) {
         event.respondWith(
-            caches.match(event.request).then(function (request) {
-                if (request) { 
-                    console.log('fetch request working');
-                    return request
+        caches.open(DATA_CACHE_NAME).then(cache => {
+            return fetch(event.request)
+            .then(response => {
+                if (response.status === 200) {
+                cache.put(event.request.url, response.clone());
                 }
-                else {       
-                    console.log('fetch failed on service worker');
-                    return fetch(event.request)
-                }
+                return response;
             })
-        )
-    
+            .catch(err => {
+            
+                return cache.match(event.request);
+            });
+        }).catch(err => console.log(err))
+        );
+
+        return;
+    }
+
+    event.respondWith(
+        fetch(event.request).catch(function() {
+            return caches.match(event.request).then(function(response) {
+                if (response) {
+                return response;
+                }
+                else if (event.request.headers.get("accept").includes("text/html")) {
+                return caches.match("/");
+                }
+            });
+        })
+    );
 });
 
+// Delete old saved items
+self.addEventListener('activate', function (event) {
+    event.waitUntil(
+        caches.keys().then(function (keyList) {
+            let saveKey = keyList.filter(function (key) {
+                return key.indexOf(APP_PREFIX);
+            })
+            
+            saveKey.push(CACHE_NAME);
 
-
-
+            return Promise.all(keyList.map(function (key, i) {
+                if (saveKey.indexOf(key) === -1) {
+                console.log('deleted: ' + keyList[i] );
+                return caches.delete(keyList[i]);
+                }
+            }));
+        })
+    );
+});

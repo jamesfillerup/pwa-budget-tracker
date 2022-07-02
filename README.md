@@ -5,6 +5,7 @@
 
 The purpose of this project to create a budgeting app that can be used online or offline. When it is offline it will save the data localy and then upload once reconnected to the internet.
 
+![image](img.png)
 
 
 ## Table of Contents
