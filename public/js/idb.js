@@ -34,7 +34,7 @@ request.onsuccess = function (event) {
     db = event.target.result;
 
     if (navigator.onLine) {
-        checkDatabase();
+        showItem();
     }
 };
 
@@ -43,12 +43,12 @@ request.onerror = function (event) {
     console.log("There was an err on idb");
 };
 
-function saveItem(item) {
+function saveRecord(record) {
 
     const transaction = db.transaction(['newItem'], 'readwrite');
     const  storeNewItem = transaction.objectStore('newItem');
 
-    storeNewItem.add(item);
+    storeNewItem.add(record);
 }
 
 //this show the items on made in the transactions

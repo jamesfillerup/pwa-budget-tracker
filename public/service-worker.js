@@ -30,37 +30,37 @@ self.addEventListener('install', function(event) {
             return cache.addAll(FILES_TO_CACHE);
         })
     );
-
     self.skipWaiting();
 });
-
-// self.addEventListener('fetch',function(e) {
-    
-// })
 
 
 
 self.addEventListener('activate', function(event) {
     event.waitUntil(
         caches.keys().then(keyList => {
-            return Promise.all(
-            keyList.map(key => {
+            let keyIndex = keyList.filter(function (key) {
+                return key.indexOf(APP_PREFIX);
+            });
+
+            keyIndex.push(CACHE_NAME);
+
+            return Promise.all(keyList.map((key, i) => {
                 console.log(key);
-                if (key !== CACHE_NAME && key !== DATA_CACHE_NAME) {
-                console.log('Removing old cache data', key);
-                return caches.delete(key);
+                if (keyIndex.indexOf (key ) === -1) {
+                console.log('gets rid of old data', keyList);
+                return caches.delete(keyList [i]);
                 }
             })
             );
         })
     );
-    self.clients.claim();
+    // self.clients.claim();
 });
 
 self.addEventListener('fetch', function (event) {
-    if (event.request.url.includes('/api/')){
+    // if (event.request.url.includes('/api/')){
         event.respondWith(
-            caches.open(event.request).then(function (request) {
+            caches.match(event.request).then(function (request) {
                 if (request) { 
                     console.log('fetch request working');
                     return request
@@ -69,10 +69,8 @@ self.addEventListener('fetch', function (event) {
                     console.log('fetch failed on service worker');
                     return fetch(event.request)
                 }
-    
             })
         )
-    }
     
 });
 
